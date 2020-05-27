@@ -92,7 +92,21 @@ void state_update(level *lvl, state *sta){
     for(int i=0;i<sta->n_enemies;i++){
         entity_physics(lvl,&sta->enemies[i].ent);
         // Kill enemy if it has less than 0 HP
-        if(sta->enemies[i].ent.hp<=0) sta->enemies[i].ent.dead = 1;
+        if(sta->enemies[i].ent.hp<=0){ 
+        	sta->enemies[i].ent.dead = 1;
+        	if(sta->enemies[i].kind == EXPLOSIVE){
+        	//Verificacion si el jugador se encuentra dentro del rango 
+		    	if((sta->pla.ent.x >= (sta->enemies[i].ent.x-200)) && (sta->pla.ent.x <= (sta->enemies[i].ent.x+200)) &&  (sta->pla.ent.y >= (sta->enemies[i].ent.y-200)) && (sta->pla.ent.y <= (sta->enemies[i].ent.y+200))){
+		    		sta->pla.ent.hp -= 3;
+		    	}
+		    	//Verificar si hay enemigos dentro del rango para realizar un daño específico
+		    	for (int pos=0; pos<sta->n_enemies; pos++){
+		    		if((sta->enemies[pos].ent.x >= (sta->enemies[i].ent.x-200)) && (sta->enemies[pos].ent.x <= (sta->enemies[i].ent.x+200)) &&  (sta->enemies[pos].ent.y >= (sta->enemies[i].ent.y-200)) && (sta->enemies[pos].ent.y <= (sta->enemies[i].ent.y+200))){
+		    			sta->enemies[pos].ent.hp -= 3;
+		    		}
+		    	}
+        	}
+        }
     }
     // Update bullets
     for(int i=0;i<sta->n_bullets;i++){
@@ -152,15 +166,19 @@ void state_populate_random(level *lvl, state *sta, int n_enemies){
                 new_enemy->ent.x = (posx+0.5)*TILE_SIZE;
                 new_enemy->ent.y = (posy+0.5)*TILE_SIZE;
                 // Pick an enemy tipe and set variables accordingly
-                int brute = rand()%4==0; // brute has 1/4 chance.
-                if(brute){
+                int brute = rand()%3; // brute has 1/4 chance.
+                if (brute == 0){
+                	new_enemy->kind   = MINION;
+                    new_enemy->ent.hp = MINION_HP;
+                    new_enemy->ent.rad = MINION_RAD;
+                }else if(brute == 1){
                     new_enemy->kind   = BRUTE;
                     new_enemy->ent.hp = BRUTE_HP;
                     new_enemy->ent.rad = BRUTE_RAD;
                 }else{
-                    new_enemy->kind   = MINION;
-                    new_enemy->ent.hp = MINION_HP;
-                    new_enemy->ent.rad = MINION_RAD;
+                    new_enemy->kind   = EXPLOSIVE;
+                    new_enemy->ent.hp = EXPLOSIVE_HP;
+                    new_enemy->ent.rad = EXPLOSIVE_RAD;
                 }
                 // Break while(1) as the operation was successful
                 break;

@@ -12,6 +12,8 @@
 #define MINION_RAD 12
 #define BRUTE_HP   12
 #define BRUTE_RAD  16
+#define EXPLOSIVE_HP 16 //vida del enemigo explosivo
+#define EXPLOSIVE_RAD 20 //radio del enemigo explosivo
 
 #define BULLET_DMG 3
 #define BULLET_SPEED 16
@@ -26,7 +28,7 @@ typedef struct {
 } player;
 
 // ==== ENEMY DEFINITION
-typedef enum {MINION=0, BRUTE=1} enemykind;
+typedef enum {MINION=0, BRUTE=1, EXPLOSIVE=2} enemykind;
 
 typedef struct {
     entity ent;
